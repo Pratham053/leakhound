@@ -1,0 +1,47 @@
+# Named patterns for well-known credential formats.
+# Each rule: id, human description, severity, and a regex pattern.
+rules:
+  - id: aws-access-key
+    description: AWS Access Key ID
+    severity: high
+    pattern: 'AKIA[0-9A-Z]{16}'
+
+  - id: github-pat
+    description: GitHub Personal Access Token
+    severity: critical
+    pattern: 'ghp_[0-9A-Za-z]{36}'
+
+  - id: github-fine-grained-pat
+    description: GitHub Fine-Grained Personal Access Token
+    severity: critical
+    pattern: 'github_pat_[0-9A-Za-z_]{82}'
+
+  - id: google-api-key
+    description: Google API Key
+    severity: high
+    pattern: 'AIza[0-9A-Za-z\-_]{35}'
+
+  - id: slack-token
+    description: Slack Token
+    severity: high
+    pattern: 'xox[baprs]-[0-9A-Za-z-]{10,48}'
+
+  - id: stripe-secret-key
+    description: Stripe Secret Key
+    severity: critical
+    pattern: 'sk_live_[0-9a-zA-Z]{24}'
+
+  - id: jwt
+    description: JSON Web Token
+    severity: medium
+    pattern: 'eyJ[A-Za-z0-9_-]+\.eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+'
+
+  - id: private-key
+    description: Private Key Block
+    severity: critical
+    pattern: '-----BEGIN (?:RSA |EC |DSA |OPENSSH )?PRIVATE KEY-----'
+
+  - id: generic-secret-assignment
+    description: Generic Hardcoded Secret
+    severity: medium
+    pattern: '(?i)(?:api[_-]?key|secret|token|password|passwd)\s*[:=]\s*[''"][^''"]{8,}[''"]'
