@@ -1,22 +1,18 @@
-from __future__ import annotations 
+from __future__ import annotations
 
-import math 
-import re 
+import math
+import re
 from collections import Counter
 from typing import Iterator
 
-from leakhound.detectors.base import Detector 
+from leakhound.detectors.base import Detector
 from leakhound.models import Finding, Severity
 
 TOKEN_PATTERN = re.compile(r"[A-Za-z0-9+/=_\-]{16,}")
 
-def shannon_entropy(data: str) -> float:
-    """Shannon entropy of a string, in bits per character.
 
-    Higher means more random. Natural-language and repetitive text score low;
-    random keys and tokens score high — exactly what we want to surface when
-    no named pattern matched.
-    """
+def shannon_entropy(data: str) -> float:
+    """Shannon entropy of a string, in bits per character."""
     if not data:
         return 0.0
     length = len(data)
@@ -25,14 +21,9 @@ def shannon_entropy(data: str) -> float:
         for count in Counter(data).values()
     )
 
+
 class EntropyDetector(Detector):
-
-    """Flags high-entropy strings that no named pattern caught.
-
-    `threshold` trades recall against noise; `min_length` ignores short tokens
-    whose entropy is statistically unreliable. Both are constructor params so
-    they can be tuned per scan without code changes.
-    """
+    """Flags high-entropy strings that no named pattern caught."""
 
     name = "entropy"
 
@@ -58,5 +49,3 @@ class EntropyDetector(Detector):
                         entropy=round(entropy, 2),
                         line_content=line.strip(),
                     )
-
-

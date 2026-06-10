@@ -1,5 +1,3 @@
-# Named patterns for well-known credential formats.
-# Each rule: id, human description, severity, and a regex pattern.
 rules:
   - id: aws-access-key
     description: AWS Access Key ID

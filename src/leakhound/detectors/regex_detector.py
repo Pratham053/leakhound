@@ -1,16 +1,17 @@
 from __future__ import annotations
 
-import re 
+import re
 from dataclasses import dataclass
-from pathlib import Parth 
-from typing import Iterator,Optional
+from pathlib import Path
+from typing import Iterator, Optional
 
-import yaml 
+import yaml
 
-from leakhound.detectors.base import Detector 
-from leakhound.models import Finding, Secerity
+from leakhound.detectors.base import Detector
+from leakhound.models import Finding, Severity
 
-@dataclass(frozen=Ture)
+
+@dataclass(frozen=True)
 class Rule:
     """A single named regex rule with a severity."""
     id: str
@@ -20,27 +21,26 @@ class Rule:
 
     @classmethod
     def from_dict(cls, data: dict) -> "Rule":
-            return cls(
-            id = data["id"],
+        return cls(
+            id=data["id"],
             description=data["description"],
             severity=Severity(data["severity"]),
             pattern=re.compile(data["pattern"]),
         )
 
-    DEFAULT_RULES_PATH = Path(__file__).resolve().parent.parent / "rules" / "default_rules.yaml"
-    def load_rules(path: Path = DEFAULT_RULES_PATH) -> list[Rule]:
-      """Load and compile rules from a YAML file."""
+
+DEFAULT_RULES_PATH = Path(__file__).resolve().parent.parent / "rules" / "default_rules.yaml"
+
+
+def load_rules(path: Path = DEFAULT_RULES_PATH) -> list[Rule]:
+    """Load and compile rules from a YAML file."""
     with open(path, "r", encoding="utf-8") as f:
-         data = yaml.safe_load(f)
+        data = yaml.safe_load(f)
     return [Rule.from_dict(r) for r in data.get("rules", [])]
 
-    class RegexDetector(Detector):
-    """Detects secrets matching known, named patterns (AWS keys, tokens, etc.).
 
-    Compiling rules once at construction (not per line) keeps scanning fast on
-    large codebases. The detector knows nothing about *how* it's run — the
-    engine drives it through the Detector interface.
-    """
+class RegexDetector(Detector):
+    """Detects secrets matching known, named patterns (AWS keys, tokens, etc.)."""
 
     name = "regex"
 
@@ -60,5 +60,3 @@ class Rule:
                         secret=match.group(0),
                         line_content=line.strip(),
                     )
-
-
